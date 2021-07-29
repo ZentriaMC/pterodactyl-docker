@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+cd /var/www/pterodactyl
+exec s6-setuidgid www-data php artisan p:user:make

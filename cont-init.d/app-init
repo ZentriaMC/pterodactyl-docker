@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+owner="www-data:www-data"
+
+# curl -s -L https://github.com/pterodactyl/panel/releases/latest/download/panel.tar.gz | tar -tzf - | grep '^storage/'
+storage_dirs=(
+	/data/storage/debugbar/
+	/data/storage/logs/
+	/data/storage/framework/sessions/
+	/data/storage/framework/cache/data/
+	/data/storage/framework/views/
+	/data/storage/app/packs/
+)
+
+if ! [ -d /data/storage ]; then
+	mkdir -p "${storage_dirs[@]}"
+	chown -R "${owner}" /data/storage
+
+fi
+
+if ! [ -d /data/bootstrap/cache ]; then
+	mkdir -p /data/bootstrap/cache
+	chown -R "${owner}" /data/bootstrap
+fi
+
+if ! [ -f /config/env ]; then
+	echo ">>> No Laravel configuration found at /config/env"
+	exit 1
+fi
+
+cd /var/www/pterodactyl
+php artisan optimize
+
+if [ -z "$(grep '^APP_KEY=' /config/env | sed 's/APP_KEY=\(.*\)/\1/')" ]; then
+	#php artisan key:generate --force
+	sed -i '/^APP_KEY=.*$/d' .env
+	echo "APP_KEY=base64:$(dd if=/dev/random bs=1 count=32 2>/dev/null | base64 -w 0)" >> .env
+fi
+
+if [ -z "$(grep '^HASHIDS_SALT=' /config/env | sed 's/HASHIDS_SALT=\(.*\)/\1/')" ]; then
+	sed -i '/^HASHIDS_SALT=.*$/d' .env
+	echo "HASHIDS_SALT=$(dd if=/dev/random bs=1 count=32 2>/dev/null | base64 -w 0)" >> .env
+fi
+
+#php artisan migrate:status
+#while ! php artisan wait_db_alive; do
+#	sleep 3
+#done
+
+php artisan migrate --seed --force
