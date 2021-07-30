@@ -1,5 +1,7 @@
 # Dockerized Pterodactyl
 
+Shoo, go away. There are already [official](https://github.com/pterodactyl/wings/blob/develop/docker-compose.example.yml) [solutions](https://github.com/pterodactyl/panel/blob/develop/docker-compose.example.yml) around.
+
 ## Why?
 
 Set up production-ready and more self-contained Pterodactyl instances in no time.
