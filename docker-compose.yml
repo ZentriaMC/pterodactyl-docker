@@ -84,6 +84,7 @@ services:
 
       # Add more mounts as needed
       - /etc/ssl/certs:/etc/ssl/certs:ro,rslave
+      # - /etc/static/ssl/certs:/etc/static/ssl/certs:ro,rslave
       # - /nix:/nix:ro,rslave
     labels:
       traefik.enable: "true"
