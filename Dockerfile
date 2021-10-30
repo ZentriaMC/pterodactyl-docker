@@ -34,13 +34,11 @@ RUN    mkdir -p /var/www/pterodactyl \
     && tar -xzvf panel.tar.gz \
     && chmod -R 755 storage/* bootstrap/cache/ \
     && rm panel.tar.gz \
-    && composer install --no-dev --optimize-autoloader \
-    && cp .env.example .env
+    && composer install --no-dev --optimize-autoloader
 
 RUN    cd /var/www/pterodactyl \
     && rm -rf storage \
     && rm -rf bootstrap/cache \
-    && rm .env \
     && ln -s /data/storage storage \
     && ln -s /data/bootstrap/cache bootstrap/cache \
     && ln -s /config/env .env
