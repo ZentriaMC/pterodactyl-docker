@@ -2,7 +2,7 @@ version: "2.4"
 
 services:
   panel:
-    image: "pterodactyl-panel"
+    image: "ghcr.io/zentriamc/pterodactyl-docker:master"
     restart: unless-stopped
     depends_on:
       - database
