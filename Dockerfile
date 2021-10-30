@@ -26,12 +26,13 @@ RUN    f="" \
        esac \
     ;  curl -s -L -o /s6-overlay-installer https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VERSION}/${f} \
     && chmod +x /s6-overlay-installer \
-    && /s6-overlay-installer /
+    && /s6-overlay-installer / \
+    && rm /s6-overlay-installer
 
 RUN    mkdir -p /var/www/pterodactyl \
     && cd /var/www/pterodactyl \
     && curl -s -L -o panel.tar.gz https://github.com/pterodactyl/panel/releases/download/${PTERODACTYL_VERSION}/panel.tar.gz \
-    && tar -xzvf panel.tar.gz \
+    && tar -xzf panel.tar.gz \
     && chmod -R 755 storage/* bootstrap/cache/ \
     && rm panel.tar.gz \
     && composer install --no-dev --optimize-autoloader --no-interaction --quiet
