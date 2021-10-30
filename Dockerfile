@@ -26,7 +26,8 @@ RUN    f="" \
        esac \
     ;  curl -s -L -o /s6-overlay-installer https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VERSION}/${f} \
     && chmod +x /s6-overlay-installer \
-    && /s6-overlay-installer /
+    && /s6-overlay-installer / \
+    && rm /s6-overlay-installer
 
 RUN    mkdir -p /var/www/pterodactyl \
     && cd /var/www/pterodactyl \
