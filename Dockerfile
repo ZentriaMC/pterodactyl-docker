@@ -31,7 +31,7 @@ RUN    f="" \
 RUN    mkdir -p /var/www/pterodactyl \
     && cd /var/www/pterodactyl \
     && curl -s -L -o panel.tar.gz https://github.com/pterodactyl/panel/releases/download/${PTERODACTYL_VERSION}/panel.tar.gz \
-    && tar -xzvf panel.tar.gz \
+    && tar -xzf panel.tar.gz \
     && chmod -R 755 storage/* bootstrap/cache/ \
     && rm panel.tar.gz \
     && composer install --no-dev --optimize-autoloader --no-interaction --quiet
