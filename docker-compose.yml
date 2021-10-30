@@ -4,10 +4,8 @@ services:
   panel:
     image: "pterodactyl-panel"
     restart: unless-stopped
-    ports:
-      - 127.0.0.1:80:80
     volumes:
-      - ./data:/data
+      - ptero-data:/data
       - ./config:/config
     #read_only: true
     tmpfs:
@@ -36,6 +34,87 @@ services:
     volumes:
       - redis:/data
 
+  docker:
+    image: "docker:20.10.10-dind"
+    restart: unless-stopped
+    privileged: true
+    command: ["-H", "unix:///var/run/dind-docker/docker.sock", "-H", "unix:///var/run/docker.sock"]
+    environment:
+      DOCKER_TLS_CERTDIR: "/certs"
+    networks:
+      - default
+    volumes:
+      - dind-certs:/certs
+      - dind-shared:/var/run/dind-docker
+      - dind-data:/var/lib/docker
+      - data:/data
+      - wings-shared:/tmp/pterodactyl
+    tmpfs:
+      - /tmp
+    ports:
+      - "2222:2222"
+      # Add more ports as needed, for example:
+      # - "<ip>:25565:25565/tcp"
+      # - "<ip>:27015:27015/udp"
+
+  wings:
+    image: "ghcr.io/pterodactyl/wings:latest"
+    restart: unless-stopped
+    depends_on:
+      - docker
+    environment:
+      # NOTE: binding docker socket to a separate directory - https://blog.zentria.company/posts/container-bind-mount-pitfalls-dns/
+      DOCKER_HOST: "unix:///var/run/dind-docker/docker.sock"
+      TZ: "UTC"
+      WINGS_USERNAME: pterodactyl
+      WINGS_UID: 2000
+      WINGS_GID: 2000
+    network_mode: "service:docker"
+    volumes:
+      - dind-shared:/var/run/dind-docker
+      - dind-data:/var/lib/docker
+      - data:/data
+      - wings-log:/var/log/pterodactyl
+      - wings-data:/var/lib/pterodactyl
+      - wings-shared:/tmp/pterodactyl
+      - ./wings-config:/etc/pterodactyl
+
+      # Add more mounts as needed
+      - /etc/ssl/certs:/etc/ssl/certs:ro,rslave
+      # - /nix:/nix:ro,rslave
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.wings-dind-pterodactyl.rule: "Host(`wings.pterodactyl.local`)"
+      traefik.http.routers.wings-dind-pterodactyl.tls: "true"
+      traefik.http.routers.wings-dind-pterodactyl.tls.certresolver: "le"
+      traefik.http.services.wings-dind-pterodactyl.loadbalancer.server.port: 80
+
 volumes:
+  # services
   database:
   redis:
+
+  # panel data
+  ptero-data:
+
+  # wings data
+  data:
+
+  dind-certs:
+  dind-data:
+
+  wings-log:
+  wings-data:
+
+  # using tmpfs for sharing sockets etc. between containers
+  # NOTE: this breaks when docker daemon is restarted with live-restore enabled!
+  #       if live restore is desired, then simply remove driver_opts to use
+  #       real filesystem instead.
+  dind-shared:
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
+  wings-shared:
+    driver_opts:
+      type: tmpfs
+      device: tmpfs
