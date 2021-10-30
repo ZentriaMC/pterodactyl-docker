@@ -4,6 +4,9 @@ services:
   panel:
     image: "pterodactyl-panel"
     restart: unless-stopped
+    depends_on:
+      - database
+      - redis
     volumes:
       - ptero-data:/data
       - ./config:/config
