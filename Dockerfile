@@ -34,7 +34,7 @@ RUN    mkdir -p /var/www/pterodactyl \
     && tar -xzvf panel.tar.gz \
     && chmod -R 755 storage/* bootstrap/cache/ \
     && rm panel.tar.gz \
-    && composer install --no-dev --optimize-autoloader
+    && composer install --no-dev --optimize-autoloader --no-interaction --quiet
 
 RUN    cd /var/www/pterodactyl \
     && rm -rf storage \
