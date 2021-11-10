@@ -21,7 +21,7 @@ services:
       traefik.http.services.pterodactyl.loadbalancer.server.port: 80
 
   database:
-    image: "mariadb:10.6.4"
+    image: "mariadb:10.7.1"
     restart: unless-stopped
     command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
     environment:
