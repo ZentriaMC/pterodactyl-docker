@@ -38,7 +38,7 @@ services:
       - redis:/data
 
   docker:
-    image: "docker:20.10.10-dind"
+    image: "docker:20.10.11-dind"
     restart: unless-stopped
     privileged: true
     command: ["-H", "unix:///var/run/dind-docker/docker.sock", "-H", "unix:///var/run/docker.sock"]
