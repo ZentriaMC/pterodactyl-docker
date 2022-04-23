@@ -11,7 +11,7 @@ RUN    apt-get update \
 
 RUN    add-apt-repository -y ppa:ondrej/php \
     && apt-get update \
-    && apt-get -y install php8.0 php8.0-cli php8.0-gd php8.0-mysql php8.0-pdo php8.0-mbstring php8.0-tokenizer php8.0-bcmath php8.0-xml php8.0-fpm php8.0-curl php8.0-zip nginx tar unzip git
+    && apt-get -y install php8.1 php8.1-cli php8.1-gd php8.1-mysql php8.1-pdo php8.1-mbstring php8.1-tokenizer php8.1-bcmath php8.1-xml php8.1-fpm php8.1-curl php8.1-zip nginx tar unzip git
 
 RUN    apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -45,8 +45,8 @@ RUN    cd /var/www/pterodactyl \
     && ln -s /config/env .env
 
 RUN    rm /etc/nginx/nginx.conf /etc/nginx/sites-enabled/*
-RUN    sed -i '/^listen\s\+=/s#/run/php/#/tmp/php/#' /etc/php/8.0/fpm/pool.d/www.conf \
-    && sed -i '/^pid\s\+=/s#/run/php/#/tmp/php/#' /etc/php/8.0/fpm/php-fpm.conf
+RUN    sed -i '/^listen\s\+=/s#/run/php/#/tmp/php/#' /etc/php/8.1/fpm/pool.d/www.conf \
+    && sed -i '/^pid\s\+=/s#/run/php/#/tmp/php/#' /etc/php/8.1/fpm/php-fpm.conf
 
 COPY ./cron/ptero /etc/cron.d/ptero
 
@@ -56,7 +56,7 @@ COPY ./cont-init.d/app-init /etc/cont-init.d/
 COPY ./cont-init.d/tmpfiles /etc/cont-init.d/
 COPY ./svc/crond-run /etc/services.d/crond/run
 COPY ./svc/nginx-run /etc/services.d/nginx/run
-COPY ./svc/php8.0-fpm-run /etc/services.d/php-fpm8.0/run
+COPY ./svc/php8.1-fpm-run /etc/services.d/php-fpm8.1/run
 COPY ./svc/ptero-queue-worker-run /etc/services.d/ptero-queue-worker/run
 COPY ./scripts/make_user /usr/local/bin/
 
