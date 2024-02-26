@@ -21,7 +21,7 @@ services:
       traefik.http.services.pterodactyl.loadbalancer.server.port: 80
 
   database:
-    image: "mariadb:10.11.7"
+    image: "docker.io/library/mariadb:10.11.7"
     restart: unless-stopped
     command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
     environment:
@@ -31,14 +31,14 @@ services:
       - database:/var/lib/mysql
 
   redis:
-    image: "redis:alpine"
+    image: "docker.io/library/redis:alpine"
     restart: unless-stopped
     command: ["redis-server", "--requirepass", "secret123"]
     volumes:
       - redis:/data
 
   docker:
-    image: "docker:25.0.3-dind"
+    image: "docker.io/library/docker:25.0.3-dind"
     restart: unless-stopped
     privileged: true
     command: ["-H", "unix:///var/run/dind-docker/docker.sock", "-H", "unix:///var/run/docker.sock"]
