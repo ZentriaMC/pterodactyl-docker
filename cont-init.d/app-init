@@ -11,6 +11,7 @@ storage_dirs=(
 	/data/storage/framework/cache/data/
 	/data/storage/framework/views/
 	/data/storage/app/packs/
+	/data/storage/clockwork/
 )
 
 if ! [ -d /data/storage ]; then
