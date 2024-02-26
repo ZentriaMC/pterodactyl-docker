@@ -53,6 +53,7 @@ services:
       - "dind-shared:/var/run/dind-docker"
       - "dind-data:/var/lib/docker"
       - "data:/data"
+      - "wings-data:/var/lib/pterodactyl"
       - "wings-shared:/tmp/pterodactyl"
     tmpfs:
       - "/tmp"
