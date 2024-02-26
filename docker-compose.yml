@@ -4,7 +4,7 @@ version: "2.4"
 services:
   panel:
     image: "ghcr.io/zentriamc/pterodactyl-docker:master"
-    restart: "unless-stopped"
+    restart: "always"
     depends_on:
       - "database"
       - "redis"
@@ -24,7 +24,7 @@ services:
 
   database:
     image: "docker.io/library/mariadb:10.11.7"
-    restart: "unless-stopped"
+    restart: "always"
     command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
     environment:
       MYSQL_ROOT_PASSWORD: "secret123"
@@ -34,14 +34,14 @@ services:
 
   redis:
     image: "docker.io/library/redis:alpine"
-    restart: "unless-stopped"
+    restart: "always"
     command: ["redis-server", "--requirepass", "secret123"]
     volumes:
       - "redis:/data"
 
   docker:
     image: "docker.io/library/docker:25.0.3-dind"
-    restart: "unless-stopped"
+    restart: "always"
     privileged: true
     command: ["-H", "unix:///var/run/dind-docker/docker.sock", "-H", "unix:///var/run/docker.sock"]
     environment:
@@ -65,7 +65,7 @@ services:
 
   wings:
     image: "ghcr.io/pterodactyl/wings:v1.11.8"
-    restart: "unless-stopped"
+    restart: "always"
     depends_on:
       - "docker"
     environment:
