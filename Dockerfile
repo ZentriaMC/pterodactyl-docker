@@ -1,7 +1,7 @@
 FROM ubuntu:22.04
 
 ARG PTERODACTYL_VERSION=v1.11.5
-ARG S6_OVERLAY_VERSION=v2.2.0.3
+ARG S6_OVERLAY_VERSION=v3.1.6.2
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV LC_ALL=C.UTF-8
@@ -20,14 +20,15 @@ RUN    curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/lo
 
 RUN    f="" \
     ;  case "$(uname -s).$(uname -m)" in \
-        Linux.x86_64)  f="s6-overlay-amd64-installer"   ;; \
-	Linux.aarch64) f="s6-overlay-aarch64-installer" ;; \
+        Linux.x86_64)  f="s6-overlay-x86_64"   ;; \
+	Linux.aarch64) f="s6-overlay-aarch64" ;; \
 	*) echo ">>> Unsupported plaform $(uname -s).$(uname -m)"; exit 1 ;; \
        esac \
-    ;  curl -s -L -o /s6-overlay-installer https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VERSION}/${f} \
-    && chmod +x /s6-overlay-installer \
-    && /s6-overlay-installer / \
-    && rm /s6-overlay-installer
+    ;  curl -s -L -o /s6-overlay-arch.tar.xz https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VERSION}/${f}.tar.xz \
+    && curl -s -L -o /s6-overlay-noarch.tar.xz https://github.com/just-containers/s6-overlay/releases/download/${S6_OVERLAY_VERSION}/s6-overlay-noarch.tar.xz \
+    && tar -C / -Jxpf /s6-overlay-noarch.tar.xz \
+    && tar -C / -Jxpf /s6-overlay-arch.tar.xz \
+    && rm /s6-overlay-noarch.tar.xz /s6-overlay-arch.tar.xz
 
 RUN    mkdir -p /var/www/pterodactyl \
     && cd /var/www/pterodactyl \
@@ -65,5 +66,6 @@ VOLUME /data
 
 ENV S6_READ_ONLY_ROOT=1
 ENV S6_BEHAVIOUR_IF_STAGE2_FAILS=2
+ENV PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/command"
 
 ENTRYPOINT ["/init"]

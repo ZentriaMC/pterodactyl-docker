@@ -11,9 +11,10 @@ services:
     volumes:
       - "ptero-data:/data"
       - "./config:/config"
-    #read_only: true
+    read_only: true
     tmpfs:
-      - /tmp
+      - "/tmp"
+      - "/run:exec"
     labels:
       traefik.enable: "true"
       traefik.http.routers.pterodactyl.rule: "Host(`panel.pterodactyl.local`)"

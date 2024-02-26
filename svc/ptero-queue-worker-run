@@ -1,4 +1,4 @@
-#!/usr/bin/execlineb -P
+#!/command/execlineb -P
 
 s6-setuidgid www-data
 /usr/bin/php /var/www/pterodactyl/artisan queue:work --queue=high,standard,low --sleep=3 --tries=3
