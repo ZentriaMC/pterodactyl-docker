@@ -1,15 +1,16 @@
+---
 version: "2.4"
 
 services:
   panel:
     image: "ghcr.io/zentriamc/pterodactyl-docker:master"
-    restart: unless-stopped
+    restart: "unless-stopped"
     depends_on:
-      - database
-      - redis
+      - "database"
+      - "redis"
     volumes:
-      - ptero-data:/data
-      - ./config:/config
+      - "ptero-data:/data"
+      - "./config:/config"
     #read_only: true
     tmpfs:
       - /tmp
@@ -22,38 +23,38 @@ services:
 
   database:
     image: "docker.io/library/mariadb:10.11.7"
-    restart: unless-stopped
+    restart: "unless-stopped"
     command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
     environment:
       MYSQL_ROOT_PASSWORD: "secret123"
       MYSQL_DATABASE: "pterodactyl"
     volumes:
-      - database:/var/lib/mysql
+      - "database:/var/lib/mysql"
 
   redis:
     image: "docker.io/library/redis:alpine"
-    restart: unless-stopped
+    restart: "unless-stopped"
     command: ["redis-server", "--requirepass", "secret123"]
     volumes:
-      - redis:/data
+      - "redis:/data"
 
   docker:
     image: "docker.io/library/docker:25.0.3-dind"
-    restart: unless-stopped
+    restart: "unless-stopped"
     privileged: true
     command: ["-H", "unix:///var/run/dind-docker/docker.sock", "-H", "unix:///var/run/docker.sock"]
     environment:
       DOCKER_TLS_CERTDIR: "/certs"
     networks:
-      - default
+      - "default"
     volumes:
-      - dind-certs:/certs
-      - dind-shared:/var/run/dind-docker
-      - dind-data:/var/lib/docker
-      - data:/data
-      - wings-shared:/tmp/pterodactyl
+      - "dind-certs:/certs"
+      - "dind-shared:/var/run/dind-docker"
+      - "dind-data:/var/lib/docker"
+      - "data:/data"
+      - "wings-shared:/tmp/pterodactyl"
     tmpfs:
-      - /tmp
+      - "/tmp"
     ports:
       - "2222:2222"
       # Add more ports as needed, for example:
@@ -62,30 +63,30 @@ services:
 
   wings:
     image: "ghcr.io/pterodactyl/wings:latest"
-    restart: unless-stopped
+    restart: "unless-stopped"
     depends_on:
-      - docker
+      - "docker"
     environment:
       # NOTE: binding docker socket to a separate directory - https://blog.zentria.company/posts/container-bind-mount-pitfalls-dns/
       DOCKER_HOST: "unix:///var/run/dind-docker/docker.sock"
       TZ: "UTC"
-      WINGS_USERNAME: pterodactyl
-      WINGS_UID: 2000
-      WINGS_GID: 2000
+      WINGS_USERNAME: "pterodactyl"
+      WINGS_UID: "2000"
+      WINGS_GID: "2000"
     network_mode: "service:docker"
     volumes:
-      - dind-shared:/var/run/dind-docker
-      - dind-data:/var/lib/docker
-      - data:/data
-      - wings-log:/var/log/pterodactyl
-      - wings-data:/var/lib/pterodactyl
-      - wings-shared:/tmp/pterodactyl
-      - ./wings-config:/etc/pterodactyl
+      - "dind-shared:/var/run/dind-docker"
+      - "dind-data:/var/lib/docker"
+      - "data:/data"
+      - "wings-log:/var/log/pterodactyl"
+      - "wings-data:/var/lib/pterodactyl"
+      - "wings-shared:/tmp/pterodactyl"
+      - "./wings-config:/etc/pterodactyl"
 
       # Add more mounts as needed
-      - /etc/ssl/certs:/etc/ssl/certs:ro,rslave
-      # - /etc/static/ssl/certs:/etc/static/ssl/certs:ro,rslave
-      # - /nix:/nix:ro,rslave
+      - "/etc/ssl/certs:/etc/ssl/certs:ro,rslave"
+      # - "/etc/static/ssl/certs:/etc/static/ssl/certs:ro,rslave"
+      # - "/nix:/nix:ro,rslave"
     labels:
       traefik.enable: "true"
       traefik.http.routers.wings-dind-pterodactyl.rule: "Host(`wings.pterodactyl.local`)"
@@ -116,9 +117,9 @@ volumes:
   #       real filesystem instead.
   dind-shared:
     driver_opts:
-      type: tmpfs
-      device: tmpfs
+      type: "tmpfs"
+      device: "tmpfs"
   wings-shared:
     driver_opts:
-      type: tmpfs
-      device: tmpfs
+      type: "tmpfs"
+      device: "tmpfs"
