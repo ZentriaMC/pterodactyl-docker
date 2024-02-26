@@ -31,18 +31,23 @@ if ! [ -f /config/env ]; then
 fi
 
 cd /var/www/pterodactyl
-php artisan optimize
 
 if [ -z "$(grep '^APP_KEY=' /config/env | sed 's/APP_KEY=\(.*\)/\1/')" ]; then
+	echo ">>> Generating 'APP_KEY'"
+
 	#php artisan key:generate --force
-	sed -i '/^APP_KEY=.*$/d' .env
-	echo "APP_KEY=base64:$(dd if=/dev/random bs=1 count=32 2>/dev/null | base64 -w 0)" >> .env
+	sed -i '/^APP_KEY=.*$/d' /config/env
+	echo "APP_KEY=base64:$(dd if=/dev/random bs=1 count=32 2>/dev/null | base64 -w 0)" >> /config/env
 fi
 
 if [ -z "$(grep '^HASHIDS_SALT=' /config/env | sed 's/HASHIDS_SALT=\(.*\)/\1/')" ]; then
-	sed -i '/^HASHIDS_SALT=.*$/d' .env
-	echo "HASHIDS_SALT=$(dd if=/dev/random bs=1 count=32 2>/dev/null | base64 -w 0)" >> .env
+	echo ">>> Generating 'HASHIDS_SALT'"
+
+	sed -i '/^HASHIDS_SALT=.*$/d' /config/env
+	echo "HASHIDS_SALT=$(dd if=/dev/random bs=1 count=32 2>/dev/null | base64 -w 0)" >> /config/env
 fi
+
+php artisan optimize
 
 #php artisan migrate:status
 #while ! php artisan wait_db_alive; do
