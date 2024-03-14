@@ -64,7 +64,7 @@ services:
       # - "<ip>:27015:27015/udp"
 
   wings:
-    image: "ghcr.io/pterodactyl/wings:v1.11.8"
+    image: "ghcr.io/pterodactyl/wings:v1.11.11"
     restart: "always"
     depends_on:
       - "docker"
