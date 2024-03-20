@@ -40,7 +40,7 @@ services:
       - "redis:/data"
 
   docker:
-    image: "docker.io/library/docker:25.0.3-dind"
+    image: "docker.io/library/docker:25.0.5-dind"
     restart: "always"
     privileged: true
     command: ["-H", "unix:///var/run/dind-docker/docker.sock", "-H", "unix:///var/run/docker.sock"]
