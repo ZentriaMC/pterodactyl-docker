@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 'Docker meta'
-        uses: crazy-max/ghaction-docker-meta@v5.5.1
+        uses: crazy-max/ghaction-docker-meta@v5.10.0
         id: docker_meta
         with:
           images: ghcr.io/ZentriaMC/pterodactyl-docker
